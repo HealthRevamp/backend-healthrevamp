@@ -13,6 +13,6 @@ router.post("/register", userRegister);
 router.post("/login", userLogin);
 
 router.put("/update", authentication, updateProfile);
-router.put("/updateSub", authentication, updateSubscribe);
+router.patch("/updateSub", authentication, updateSubscribe);
 
 module.exports = router;

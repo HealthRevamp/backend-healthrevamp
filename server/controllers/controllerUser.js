@@ -1,6 +1,7 @@
 const { User } = require("../models");
 const { generateToken } = require("../helpers/jwt-generator");
 const bcrypt = require("bcryptjs");
+const udpateDate = require("../helpers/updateDate");
 
 class ControllerUser {
   static async userRegister(req, res, next) {
@@ -10,9 +11,7 @@ class ControllerUser {
         username,
         email,
         password,
-        isSubscribed: false,
-        startSub: 0,
-        endSub: 0,
+        endSub: udpateDate(new Date(), 30),
         height: 0,
         weight: 0,
         gender: "",
@@ -78,30 +77,28 @@ class ControllerUser {
 
   static async updateSubscribe(req, res, next) {
     try {
-      //DATA YANG DI UPDATE SUBSCRIBE
-
       const user = await User.findByPk(req.addtionalData.userId);
       if (!user) throw { name: "Datanotfound" };
 
-      const date = new Date(user.startSub);
+      if (user) {
+        const { endSub } = req.body;
+        let newdate = new Date();
 
-      const changedate = date.toLocaleDateString("en-US", {
-        year: "numeric",
-        month: "2-digit",
-        day: "2-digit",
-      });
+        if (user.endSub >= new Date()) {
+          //DI CEK APAKAH ENDSUB SUDAH HABIS ATAU BELUM JIKA BELUM AKAN DI TAMBAH DENGAN VALUE
+          newdate = udpateDate(user.endSub, endSub);
+        } else {
+          //JIKA SUDAH HABIS AKAN DITAMBAH DENGAN TANGGAL HARI INI + DENGAN VALUE
+          newdate = udpateDate(new Date(), endSub);
+        }
 
-      console.log(changedate);
+        await user.update({ endSub: newdate });
 
-      //   if (user) {
-      //     const { endSub } = req.body;
-      //     await user.update({ isSubscribed: true, startSub: new Date(), endSub });
-
-      //     res.status(200).json({
-      //       statusCode: 200,
-      //       message: "Success to update",
-      //     });
-      //   }
+        res.status(200).json({
+          statusCode: 200,
+          message: "Success to Subscribe",
+        });
+      }
     } catch (err) {
       next(err);
     }
