@@ -22,12 +22,6 @@ module.exports = {
         type: Sequelize.STRING,
         allowNull: false,
       },
-      isSubscribed: {
-        type: Sequelize.BOOLEAN,
-      },
-      startSub: {
-        type: Sequelize.DATE,
-      },
       endSub: {
         type: Sequelize.DATE,
       },

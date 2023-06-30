@@ -15,8 +15,8 @@ module.exports = {
       timeElapsed: {
         type: Sequelize.DATE,
       },
-      isCompleted: {
-        type: Sequelize.BOOLEAN,
+      idActivity: {
+        type: Sequelize.INTEGER,
       },
       UserId: {
         type: Sequelize.INTEGER,
