@@ -1,8 +1,9 @@
 const express = require("express");
 const authentication = require("../middlewares/authentication");
-const { paymentStripe } = require("../controllers/controllerApi");
+const { paymentStripe, sendMail } = require("../controllers/controllerApi");
 const router = express.Router();
 
 router.post("/payment", authentication, paymentStripe);
+router.post("/mail", authentication, sendMail);
 
 module.exports = router;
