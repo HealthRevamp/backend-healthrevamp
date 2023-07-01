@@ -1,13 +1,13 @@
 const calculatePrice = (duration) => {
   switch (duration) {
-    case 1:
+    case 30:
       return 100_000;
-    case 6:
+    case 180:
       return 200_000;
-    case 12:
+    case 365:
       return 300_000;
     default:
-      return 100_1000;
+      return 100_000;
   }
 };
 

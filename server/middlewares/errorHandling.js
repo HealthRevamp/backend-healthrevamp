@@ -6,7 +6,14 @@ function errorHandling(err, req, res, next) {
       statusCode = 400;
       message = "validation";
       break;
-
+    case "unauthorized":
+      statusCode = 403;
+      message = "Not Authorized";
+      break;
+    case "notFound":
+      statusCode = 404;
+      message = "Not Found";
+      break;
     default:
       message = "Internal Server Error";
       break;
