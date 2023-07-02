@@ -14,8 +14,34 @@ module.exports = (sequelize, DataTypes) => {
   }
   Habit.init(
     {
-      name: DataTypes.STRING,
-      time: DataTypes.DATE,
+      name: {
+        type: DataTypes.STRING,
+        allowNull: false,
+        validate: {
+          notNull: {
+            args: true,
+            msg: "Title must not be null",
+          },
+          notEmpty: {
+            args: true,
+            msg: "Title must not be empty",
+          },
+        },
+      },
+      time: {
+        type: DataTypes.DATE,
+        allowNull: false,
+        validate: {
+          notNull: {
+            args: true,
+            msg: "Time must not be null",
+          },
+          notEmpty: {
+            args: true,
+            msg: "Time must not be empty",
+          },
+        },
+      },
       description: DataTypes.TEXT,
       UserId: DataTypes.INTEGER,
     },
