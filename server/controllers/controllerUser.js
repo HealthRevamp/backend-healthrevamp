@@ -1,9 +1,7 @@
 const { User } = require("../models");
-
 const { generateToken } = require("../helpers/jwt-generator");
 const bcrypt = require("bcryptjs");
 const udpateDate = require("../helpers/updateDate");
-const { use } = require("../routes");
 
 class ControllerUser {
   static async userRegister(req, res, next) {

@@ -15,7 +15,6 @@ module.exports = (sequelize, DataTypes) => {
   ActivityLog.init(
     {
       calorieBurned: DataTypes.INTEGER,
-      timeElapsed: DataTypes.DATE,
       idActivity: DataTypes.STRING,
       UserId: DataTypes.INTEGER,
     },

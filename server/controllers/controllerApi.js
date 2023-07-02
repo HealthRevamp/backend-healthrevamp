@@ -2,6 +2,7 @@ const calculatePrice = require("../helpers/subscribePayment");
 const stripe = require("stripe")(
   "sk_test_51NOe6GF6N9Yr0jswgafC8DZOrHAPhzN3IA4cYq3ou71t6EjaODyFDdDa51u7SQajSHhAdZ9D1S52KFoOBqUweIuA00cxxriVxp"
 );
+const SerpApi = require("google-search-results-nodejs");
 const { ActivityLog } = require("../models");
 const admin = require("./firebase_sdk");
 const axios = require("axios");
@@ -59,8 +60,8 @@ class ControllerApi {
       next(err);
     }
   }
-    
-    static async challengeActivity(req, res, next) {
+
+  static async challengeActivity(req, res, next) {
     const userId = req.addtionalData.userId;
 
     const options = {
@@ -136,26 +137,33 @@ class ControllerApi {
     }
   }
 
-  static async calorieBurnedFromActivity(req, res, next) {
-    const options = {
-      method: "GET",
-      url: "https://fitness-calculator.p.rapidapi.com/burnedcalorie",
-      params: {
-        activityid: "ho_16",
-        activitymin: "25",
-        weight: "75",
-      },
-      headers: {
-        "X-RapidAPI-Key": "3f5498a87bmsha9ea3e5314c773ap1cc751jsn7b8f405938c7",
-        "X-RapidAPI-Host": "fitness-calculator.p.rapidapi.com",
-      },
-    };
-
+  static async foodNutrition(req, res, next) {
     try {
-      const response = await axios.request(options);
-      res.status(200).json(response.data);
+      const { searchFood } = req.body;
+      const search = new SerpApi.GoogleSearch(
+        "a8c09d15a0ccc04a296495997d28041bb2338d7569b727382cf8e87bcdfa3adf"
+      );
+
+      const params = {
+        engine: "google",
+        q: searchFood,
+      };
+
+      const callback = function (data) {
+        const responseData = {
+          recipes_results: data.recipes_results,
+          knowledge_graph: {
+            header_images: data.knowledge_graph.header_images,
+            description: data.knowledge_graph.description,
+            list: data.knowledge_graph.list,
+          },
+        };
+        res.status(200).json(responseData);
+      };
+      // Tampilkan hasil sebagai JSON
+      search.json(params, callback);
     } catch (error) {
-      console.error(error);
+      next(error);
     }
   }
 
@@ -164,6 +172,7 @@ class ControllerApi {
       const { userId: senderId } = req.addtionalData;
       let { receiverId, message } = req.body;
       console.log(admin, "asd");
+
       // const messagesRef = admin.database().ref("messages");
 
       // messagesRef.push({ senderId, receiverId: +receiverId, message });
@@ -188,9 +197,7 @@ class ControllerApi {
       console.log(error);
       next(error);
     }
-
-    }
   }
-
+}
 
 module.exports = ControllerApi;
