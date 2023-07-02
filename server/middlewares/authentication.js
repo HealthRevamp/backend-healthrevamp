@@ -4,7 +4,7 @@ const { User } = require("../models/index");
 async function authentication(req, res, next) {
   try {
     const { access_token } = req.headers;
-
+    console.log(access_token);
     if (!access_token) {
       throw { name: "UnaunthenticatedToken" };
     }
@@ -21,6 +21,7 @@ async function authentication(req, res, next) {
     req.addtionalData = {
       userId: user.id,
       level: user.level,
+      email: user.email,
     };
 
     next();
