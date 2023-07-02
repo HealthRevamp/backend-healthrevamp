@@ -1,5 +1,4 @@
 const { User } = require("../models");
-
 const { generateToken } = require("../helpers/jwt-generator");
 const bcrypt = require("bcryptjs");
 const udpateDate = require("../helpers/updateDate");

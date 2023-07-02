@@ -22,6 +22,7 @@ async function authentication(req, res, next) {
       userId: user.id,
       level: user.level,
       email: user.email,
+      weight: user.weight,
     };
 
     next();

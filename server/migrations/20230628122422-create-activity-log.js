@@ -12,9 +12,6 @@ module.exports = {
       calorieBurned: {
         type: Sequelize.INTEGER,
       },
-      timeElapsed: {
-        type: Sequelize.DATE,
-      },
       idActivity: {
         type: Sequelize.STRING,
       },
