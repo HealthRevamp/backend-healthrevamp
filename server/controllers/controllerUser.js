@@ -3,7 +3,6 @@ const { User } = require("../models");
 const { generateToken } = require("../helpers/jwt-generator");
 const bcrypt = require("bcryptjs");
 const udpateDate = require("../helpers/updateDate");
-const { use } = require("../routes");
 
 class ControllerUser {
   static async userRegister(req, res, next) {
@@ -66,7 +65,7 @@ class ControllerUser {
       //DATA YANG DI UPDATE USERNAME, HEIGHT, WEIGHT, GENDER
 
       const user = await User.findByPk(req.addtionalData.userId);
-      if (!user) throw { name: "Datanotfound" };
+      if (!user) throw { name: "notFound" };
       if (user) {
         await user.update(req.body);
         res.status(200).json({
@@ -82,7 +81,7 @@ class ControllerUser {
   static async updateSubscribe(req, res, next) {
     try {
       const user = await User.findByPk(req.addtionalData.userId);
-      if (!user) throw { name: "Datanotfound" };
+      if (!user) throw { name: "notFound" };
 
       if (user) {
         const { endSub } = req.body;
@@ -111,7 +110,7 @@ class ControllerUser {
   static async updateTotalCalorie(req, res, next) {
     try {
       const user = await User.findByPk(req.addtionalData.userId);
-      if (!user) throw { name: "Datanotfound" };
+      if (!user) throw { name: "notFound" };
 
       if (user) {
         const { weight, gender } = user;
@@ -139,7 +138,7 @@ class ControllerUser {
   static async rangkingCalorie(req, res, next) {
     try {
       const user = await User.findByPk(req.addtionalData.userId);
-      if (!user) throw { name: "Datanotfound" };
+      if (!user) throw { name: "notFound" };
 
       const users = await User.findAll({
         order: [["totalCalorie", "DESC"]],

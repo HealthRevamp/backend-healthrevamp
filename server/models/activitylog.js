@@ -15,8 +15,23 @@ module.exports = (sequelize, DataTypes) => {
   ActivityLog.init(
     {
       calorieBurned: DataTypes.INTEGER,
-      timeElapsed: DataTypes.DATE,
-      idActivity: DataTypes.STRING,
+      timeElapsed: {
+        type: DataTypes.DATE,
+      },
+      idActivity: {
+        type: DataTypes.STRING,
+        allowNull: false,
+        validate: {
+          notNull: {
+            args: true,
+            msg: "Activity must not be null",
+          },
+          notEmpty: {
+            args: true,
+            msg: "Activity must not be empty",
+          },
+        },
+      },
       UserId: DataTypes.INTEGER,
     },
     {

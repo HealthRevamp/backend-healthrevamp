@@ -27,7 +27,7 @@ module.exports = {
           height: 180,
           weight: 60,
           gender: "female",
-          totalRun: 0,
+          totalCalorie: 0,
         },
       ],
       {}
