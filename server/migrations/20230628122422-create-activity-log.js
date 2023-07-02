@@ -16,7 +16,7 @@ module.exports = {
         type: Sequelize.DATE,
       },
       idActivity: {
-        type: Sequelize.INTEGER,
+        type: Sequelize.STRING,
       },
       UserId: {
         type: Sequelize.INTEGER,

@@ -13,8 +13,6 @@ module.exports = (sequelize, DataTypes) => {
     static associate(models) {
       this.hasMany(models.ActivityLog, {});
       this.hasMany(models.Habit, {});
-      this.hasMany(models.Ranking, {});
-      this.hasMany(models.Run, {});
     }
   }
   User.init(
@@ -26,7 +24,8 @@ module.exports = (sequelize, DataTypes) => {
       height: DataTypes.INTEGER,
       weight: DataTypes.INTEGER,
       gender: DataTypes.STRING,
-      totalRun: DataTypes.INTEGER,
+      totalCalorie: DataTypes.INTEGER,
+      level: DataTypes.INTEGER,
     },
     {
       hooks: {

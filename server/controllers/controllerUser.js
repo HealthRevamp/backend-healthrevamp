@@ -2,6 +2,7 @@ const { User } = require("../models");
 const { generateToken } = require("../helpers/jwt-generator");
 const bcrypt = require("bcryptjs");
 const udpateDate = require("../helpers/updateDate");
+const { use } = require("../routes");
 
 class ControllerUser {
   static async userRegister(req, res, next) {
@@ -15,7 +16,8 @@ class ControllerUser {
         height: 0,
         weight: 0,
         gender: "",
-        totalRun: 0,
+        totalCalorie: 0,
+        level: 1,
       });
 
       if (created) {
@@ -42,6 +44,7 @@ class ControllerUser {
           email: user.email,
           password: user.password,
           username: user.username,
+          level: user.level,
         });
 
         if (bcrypt.compareSync(password, user.password)) {
@@ -99,6 +102,60 @@ class ControllerUser {
           message: "Success to Subscribe",
         });
       }
+    } catch (err) {
+      next(err);
+    }
+  }
+
+  static async updateTotalCalorie(req, res, next) {
+    try {
+      const user = await User.findByPk(req.addtionalData.userId);
+      if (!user) throw { name: "Datanotfound" };
+
+      if (user) {
+        const { weight, gender } = user;
+        const { run } = req.body;
+
+        let calorie = weight * JSON.parse(run) * 0.66 * 1.3;
+        if (gender === "male") {
+          calorie = weight * JSON.parse(run) * 1.0 * 1.3;
+        }
+
+        let totalCalorie = user.totalCalorie + Math.ceil(calorie);
+
+        await user.update({ totalCalorie });
+
+        res.status(200).json({
+          statusCode: 200,
+          message: "Success to Total Calorie",
+        });
+      }
+    } catch (err) {
+      next(err);
+    }
+  }
+
+  static async rangkingCalorie(req, res, next) {
+    try {
+      const user = await User.findByPk(req.addtionalData.userId);
+      if (!user) throw { name: "Datanotfound" };
+
+      const users = await User.findAll({
+        order: [["totalCalorie", "DESC"]],
+        limit: 10,
+      });
+
+      const currentUserPosition = users.findIndex((u) => u.id === user.id) + 1;
+      const totalUsers = await User.count();
+
+      res.status(200).json({
+        statusCode: 200,
+        message: {
+          users,
+          currentUserPosition,
+          totalUsers,
+        },
+      });
     } catch (err) {
       next(err);
     }

@@ -20,6 +20,7 @@ async function authentication(req, res, next) {
 
     req.addtionalData = {
       userId: user.id,
+      level: user.level,
     };
 
     next();
