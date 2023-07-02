@@ -34,7 +34,10 @@ module.exports = {
       gender: {
         type: Sequelize.STRING,
       },
-      totalRun: {
+      totalCalorie: {
+        type: Sequelize.INTEGER,
+      },
+      level: {
         type: Sequelize.INTEGER,
       },
       createdAt: {
