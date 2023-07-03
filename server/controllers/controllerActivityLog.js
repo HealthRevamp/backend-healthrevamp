@@ -39,7 +39,17 @@ class controllerActivityLogs {
         //UPDATE TOTAL CALORIES YANG ADA DI USER
         const user = await User.findByPk(req.addtionalData.userId);
         let totalCalorie = user.totalCalorie + Math.ceil(created.calorieBurned);
-        await user.update({ totalCalorie });
+        //UPDATE LEVEL
+        const updateLevel = Math.floor(totalCalorie / 20000);
+        let level = user.level;
+
+        if (updateLevel === 1) {
+          level += updateLevel;
+        } else if (updateLevel > 1) {
+          level = updateLevel;
+        }
+
+        await user.update({ totalCalorie, level });
       }
     } catch (err) {
       next(err);
