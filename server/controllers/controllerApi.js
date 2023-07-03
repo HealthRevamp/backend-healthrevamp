@@ -4,8 +4,9 @@ const stripe = require("stripe")(
 );
 const SerpApi = require("google-search-results-nodejs");
 const { ActivityLog } = require("../models");
-const admin = require("./firebase_sdk");
 const axios = require("axios");
+const cron = require("node-cron");
+
 class ControllerApi {
   static async paymentStripe(req, res, next) {
     try {
@@ -140,63 +141,96 @@ class ControllerApi {
   static async foodNutrition(req, res, next) {
     try {
       const { searchFood } = req.body;
-      const search = new SerpApi.GoogleSearch(
-        "a8c09d15a0ccc04a296495997d28041bb2338d7569b727382cf8e87bcdfa3adf"
-      );
 
-      const params = {
-        engine: "google",
-        q: searchFood,
+      const optionsNutrition = {
+        method: "GET",
+        url: "https://api.calorieninjas.com/v1/nutrition?query=" + searchFood,
+        headers: {
+          "X-Api-Key": "pUb0ALsgzlV9xtduY/dWdQ==CkdAw2khQ2Sg9ewJ",
+        },
       };
+      const { data: nutrition } = await axios.request(optionsNutrition); //NUTRITION
 
-      const callback = function (data) {
-        const responseData = {
-          recipes_results: data.recipes_results,
-          knowledge_graph: {
-            header_images: data.knowledge_graph.header_images,
-            description: data.knowledge_graph.description,
-            list: data.knowledge_graph.list,
-          },
+      if (nutrition) {
+        const search = new SerpApi.GoogleSearch(
+          "a8c09d15a0ccc04a296495997d28041bb2338d7569b727382cf8e87bcdfa3adf"
+        );
+
+        const params = {
+          engine: "google",
+          q: searchFood,
         };
-        res.status(200).json(responseData);
-      };
-      // Tampilkan hasil sebagai JSON
-      search.json(params, callback);
+
+        const callback = function (data) {
+          const responseData = {
+            images: data.knowledge_graph.header_images,
+            nutrition,
+          };
+          res.status(200).json(responseData);
+        };
+
+        search.json(params, callback);
+      }
     } catch (error) {
-      next(error);
+      console.log(error);
     }
   }
 
   static async notificationHabit(req, res, next) {
     try {
-      const { userId: senderId } = req.addtionalData;
-      let { receiverId, message } = req.body;
-      console.log(admin, "asd");
+      const { message } = req.body;
 
-      // const messagesRef = admin.database().ref("messages");
-
-      // messagesRef.push({ senderId, receiverId: +receiverId, message });
-      // const messagePayload = {
-      //   notification: {
-      //     title: `New message from ${senderId}`,
-      //     body: message,
-      //   },
-      //   topic: receiverId,
-      // };
-      // admin
-      //   .messaging()
-      //   .send(messagePayload)
-      //   .then((response) => {
-      //     res.json({ message: "Message sent successfully." });
-      //   })
-      //   .catch((error) => {
-      //     console.error(error);
-      //     res.status(500).json({ error: "Failed to send message." });
-      //   });
+      const response = await axios.post(
+        "https://fcm.googleapis.com/fcm/send",
+        {
+          notification: {
+            title: "Health Revamp",
+            body: message,
+            image:
+              "https://banner2.cleanpng.com/20180330/raq/kisspng-logo-medicine-health-care-health-5abeb8ce528090.2165434215224485903379.jpg",
+          },
+          to: "e5ocbYAgQ9m97VJCdmnYkd:APA91bF5T3eCT-XZlA7zukecir_xNZ_et7vI9focncDWz_ptk-mmVkvupF0GIngAOwmz2YLlCdJcYfW9nWDVbLCMJYfOVwZgjWSpeZ61eT9cL6K6fWPrA3wxwwt8ishy0EGJG_78BYp5",
+        },
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization:
+              "key=AAAAmpreejw:APA91bEawv-N5rlA30wvzqZDuP0pmuKVPLXCiiIYrhlu8zO4S-v5o0UEP5kkV5KDZLaGc9rsjlrmthQgGsFa9bfY5S6XWzpcGZHcnRl8HftMYoeEfpEGJiV-iHzmN6Y8xxecKzVSThzY",
+          },
+        }
+      );
+      res.status(200).json({ message: "Notifikasi berhasil dikirim" });
     } catch (error) {
       console.log(error);
       next(error);
     }
+  }
+
+  static async runNotification(req, res, next) {
+    // Definisikan fungsi yang akan dijalankan secara berkala
+    const cronJob = async () => {
+      try {
+        // Logika atau tugas yang ingin Anda lakukan
+        console.log("Cronjob berjalan pada waktu:", new Date());
+        // Tugas atau proses asinkron lainnya bisa ditambahkan di sini
+        // Pastikan untuk menangani kesalahan (error handling) dengan benar
+      } catch (error) {
+        console.error("Terjadi kesalahan:", error);
+      }
+    };
+
+    // Jadwalkan cronjob untuk dijalankan setiap menit
+    cron.schedule("* * * * *", async () => {
+      await cronJob();
+    });
+
+    // Untuk menghentikan cronjob, Anda bisa menggunakan:
+    // cron.schedule('* * * * *', async () => {
+    //   await cronJob();
+    //   cron.schedule('* * * * *', async () => {
+    //     process.exit(); // Hentikan cronjob setelah dijalankan sekali
+    //   });
+    // });
   }
 }
 
