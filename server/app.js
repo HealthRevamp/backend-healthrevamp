@@ -16,6 +16,9 @@ app.use(express.urlencoded({ extended: false }));
 app.use(index);
 app.use(errorHandling);
 
-app.listen(PORT, () => {
-  console.log(`Server is running on port http://localhost:${PORT}`);
-});
+module.exports = app
+
+
+// app.listen(PORT, () => {
+//   console.log(`Server is running on port http://localhost:${PORT}`);
+// });

@@ -34,8 +34,9 @@ class ControllerUser {
     try {
       const { email, password } = req.body;
       const user = await User.findOne({ where: { email } }); // cek ada user atau engga
-      if (!user) throw { name: "errorLogin" }; //jika tidak ada user
 
+      if (!user) throw { name: "errorLogin" }; //jika tidak ada user
+      console.log(user);
       if (user) {
         // jika ada user
         const access_token = generateToken({
@@ -63,15 +64,14 @@ class ControllerUser {
     try {
       //DATA YANG DI UPDATE USERNAME, HEIGHT, WEIGHT, GENDER
 
-      const user = await User.findByPk(req.addtionalData.userId);
-      if (!user) throw { name: "notFound" };
-      if (user) {
-        await user.update(req.body);
-        res.status(200).json({
-          statusCode: 200,
-          message: "Success to update",
-        });
-      }
+      // const user = await User.findByPk(req.addtionalData.userId);
+      // if (!user) throw { name: "notFound" };
+      const { userId } = req.addtionalData;
+      await User.update(req.body, { where: { id: userId } });
+      res.status(200).json({
+        statusCode: 200,
+        message: "Success to update",
+      });
     } catch (err) {
       next(err);
     }
@@ -80,27 +80,24 @@ class ControllerUser {
   static async updateSubscribe(req, res, next) {
     try {
       const user = await User.findByPk(req.addtionalData.userId);
-      if (!user) throw { name: "notFound" };
 
-      if (user) {
-        const { endSub } = req.body;
-        let newdate = new Date();
+      const { endSub } = req.body;
+      let newdate = new Date();
 
-        if (user.endSub >= new Date()) {
-          //DI CEK APAKAH ENDSUB SUDAH HABIS ATAU BELUM JIKA BELUM AKAN DI TAMBAH DENGAN VALUE
-          newdate = udpateDate(user.endSub, endSub);
-        } else {
-          //JIKA SUDAH HABIS AKAN DITAMBAH DENGAN TANGGAL HARI INI + DENGAN VALUE
-          newdate = udpateDate(new Date(), endSub);
-        }
-
-        await user.update({ endSub: newdate });
-
-        res.status(200).json({
-          statusCode: 200,
-          message: "Success to Subscribe",
-        });
+      if (user.endSub >= new Date()) {
+        //DI CEK APAKAH ENDSUB SUDAH HABIS ATAU BELUM JIKA BELUM AKAN DI TAMBAH DENGAN VALUE
+        newdate = udpateDate(user.endSub, endSub);
+      } else {
+        //JIKA SUDAH HABIS AKAN DITAMBAH DENGAN TANGGAL HARI INI + DENGAN VALUE
+        newdate = udpateDate(new Date(), endSub);
       }
+
+      await user.update({ endSub: newdate });
+
+      res.status(200).json({
+        statusCode: 200,
+        message: "Success to Subscribe",
+      });
     } catch (err) {
       next(err);
     }
