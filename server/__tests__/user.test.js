@@ -1,7 +1,6 @@
 const request = require("supertest");
 const assert = require("assert");
 const app = require("../app");
-const bcrypt = require("bcryptjs");
 const { User } = require("../models");
 let access_token;
 let access_token1;
@@ -178,6 +177,22 @@ describe("put /users/update", function () {
     expect(response.body.message).toMatch(new RegExp("Success to update"));
   });
 
+  it("Success Update 200: male", async function () {
+    const response = await request(app)
+      .put("/users/update")
+      .send({
+        username: "a",
+        height: 45,
+        weight: 70,
+        gender: "male",
+      })
+      .set({ access_token: access_token1, Accept: "application/json" });
+    expect(response.status).toEqual(200);
+    expect(response.body).toHaveProperty("statusCode");
+    expect(response.body).toHaveProperty("message");
+    expect(response.body.message).toMatch(new RegExp("Success to update"));
+  });
+
   it("Failed Update fail authentication incorrect token 401", async function () {
     const response = await request(app)
       .put("/users/update")
@@ -260,6 +275,21 @@ describe("patch /users/updateCal", function () {
         run: 2000,
       })
       .set({ access_token, Accept: "application/json" });
+    expect(response.status).toEqual(200);
+    expect(response.body).toHaveProperty("statusCode");
+    expect(response.body).toHaveProperty("message");
+    expect(response.body.message).toMatch(
+      new RegExp("Success to Total Calorie")
+    );
+  });
+
+  it("Success Update calories: male", async function () {
+    const response = await request(app)
+      .patch("/users/updateCal")
+      .send({
+        run: 200000000,
+      })
+      .set({ access_token: access_token1, Accept: "application/json" });
     expect(response.status).toEqual(200);
     expect(response.body).toHaveProperty("statusCode");
     expect(response.body).toHaveProperty("message");
