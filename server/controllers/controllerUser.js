@@ -150,7 +150,6 @@ class ControllerUser {
 
       const users = await User.findAll({
         order: [["totalCalorie", "DESC"]],
-        limit: 10,
       });
 
       const currentUserPosition = users.findIndex((u) => u.id === user.id) + 1;
@@ -159,7 +158,7 @@ class ControllerUser {
       res.status(200).json({
         statusCode: 200,
         message: {
-          users,
+          users: users.slice(0, 10),
           currentUserPosition,
           totalUsers,
         },
