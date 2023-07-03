@@ -52,6 +52,14 @@ class ControllerUser {
           res.status(200).json({
             statusCode: 200,
             access_token: access_token,
+            data: {
+              username: user.username,
+              totalCalorie: user.totalCalorie,
+              endSub: user.endSub,
+              height: user.height,
+              weight: user.weight,
+              level: user.level,
+            },
           });
         } else throw { name: "errorLogin" }; //boleh di ubah
       }
@@ -112,14 +120,19 @@ class ControllerUser {
         const { weight, gender } = user;
         const { run } = req.body;
 
-        let calorie = weight * JSON.parse(run) * 0.66 * 1.3;
+        let calorie = weight * (JSON.parse(run) / 1000) * 0.9;
         if (gender === "male") {
-          calorie = weight * JSON.parse(run) * 1.0 * 1.3;
+          calorie = weight * (JSON.parse(run) / 1000) * 1.0;
         }
 
-        let totalCalorie = user.totalCalorie + Math.ceil(calorie);
+        let updatedTotalCalorie = user.totalCalorie + Math.ceil(calorie);
+        const updateLevel = Math.floor(updatedTotalCalorie / 20000);
+        let level = user.level;
 
-        await user.update({ totalCalorie });
+        if (updateLevel > 1) {
+          level += updateLevel;
+        }
+        await user.update({ totalCalorie: updatedTotalCalorie, level });
 
         res.status(200).json({
           statusCode: 200,
