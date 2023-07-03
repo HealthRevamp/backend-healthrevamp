@@ -36,7 +36,6 @@ class ControllerUser {
       const user = await User.findOne({ where: { email } }); // cek ada user atau engga
 
       if (!user) throw { name: "errorLogin" }; //jika tidak ada user
-      console.log(user);
       if (user) {
         // jika ada user
         const access_token = generateToken({

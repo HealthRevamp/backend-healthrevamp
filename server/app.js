@@ -12,13 +12,14 @@ app.use(express.static("public"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
-
 app.use(index);
 app.use(errorHandling);
 
-module.exports = app
+//RUN CRON
+// require("./helpers/cron.js");
 
+// module.exports = app;
 
-// app.listen(PORT, () => {
-//   console.log(`Server is running on port http://localhost:${PORT}`);
-// });
+app.listen(PORT, () => {
+  console.log(`Server is running on port http://localhost:${PORT}`);
+});

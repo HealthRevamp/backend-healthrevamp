@@ -94,7 +94,37 @@ class ControllerApi {
       console.log(filteredActivities);
       res.status(200).json(filteredActivities);
     } catch (error) {
-      console.error(error);
+      next(error);
+    }
+  }
+
+  static async getActivityById(req, res, next) {
+    const { id } = req.params;
+    try {
+      const options = {
+        method: "GET",
+        url: "https://fitness-calculator.p.rapidapi.com/activities",
+        params: {
+          intensitylevel: req.addtionalData.level,
+        },
+        headers: {
+          "X-RapidAPI-Key":
+            "3f5498a87bmsha9ea3e5314c773ap1cc751jsn7b8f405938c7",
+          "X-RapidAPI-Host": "fitness-calculator.p.rapidapi.com",
+        },
+      };
+
+      const response = await axios.request(options);
+      const activities = response.data.data;
+      const activity = activities.find((activity) => activity.id === id);
+
+      if (activity) {
+        res.status(200).json(activity);
+      } else {
+        res.status(404).json({ message: "Activity not found" });
+      }
+    } catch (error) {
+      next(error);
     }
   }
 
@@ -134,7 +164,7 @@ class ControllerApi {
       console.log(completedActivityData);
       res.status(200).json(completedActivityData);
     } catch (error) {
-      console.error(error);
+      next(error);
     }
   }
 
@@ -151,7 +181,7 @@ class ControllerApi {
       };
       const { data: nutrition } = await axios.request(optionsNutrition); //NUTRITION
 
-      if (nutrition) {
+      if (nutrition.items.length === 1) {
         const search = new SerpApi.GoogleSearch(
           "a8c09d15a0ccc04a296495997d28041bb2338d7569b727382cf8e87bcdfa3adf"
         );
@@ -170,9 +200,11 @@ class ControllerApi {
         };
 
         search.json(params, callback);
+      } else {
+        res.status(404).json(`${searchFood} not found`);
       }
     } catch (error) {
-      console.log(error);
+      next(error);
     }
   }
 
@@ -199,38 +231,10 @@ class ControllerApi {
           },
         }
       );
-      res.status(200).json({ message: "Notifikasi berhasil dikirim" });
+      // res.status(200).json({ message: "Notifikasi berhasil dikirim" });
     } catch (error) {
-      console.log(error);
       next(error);
     }
-  }
-
-  static async runNotification(req, res, next) {
-    // Definisikan fungsi yang akan dijalankan secara berkala
-    const cronJob = async () => {
-      try {
-        // Logika atau tugas yang ingin Anda lakukan
-        console.log("Cronjob berjalan pada waktu:", new Date());
-        // Tugas atau proses asinkron lainnya bisa ditambahkan di sini
-        // Pastikan untuk menangani kesalahan (error handling) dengan benar
-      } catch (error) {
-        console.error("Terjadi kesalahan:", error);
-      }
-    };
-
-    // Jadwalkan cronjob untuk dijalankan setiap menit
-    cron.schedule("* * * * *", async () => {
-      await cronJob();
-    });
-
-    // Untuk menghentikan cronjob, Anda bisa menggunakan:
-    // cron.schedule('* * * * *', async () => {
-    //   await cronJob();
-    //   cron.schedule('* * * * *', async () => {
-    //     process.exit(); // Hentikan cronjob setelah dijalankan sekali
-    //   });
-    // });
   }
 }
 
