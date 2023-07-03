@@ -16,6 +16,6 @@ router.get("/completedActivity", authentication, completedActivity);
 router.get("/notification", authentication, notificationHabit);
 router.post("/payment", authentication, paymentStripe);
 router.post("/mail", authentication, sendMail);
-router.get("/food-nutrition", authentication, foodNutrition);
+router.post("/food-nutrition", authentication, foodNutrition);
 
 module.exports = router;
