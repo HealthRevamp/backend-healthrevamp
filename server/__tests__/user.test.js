@@ -4,6 +4,7 @@ const app = require("../app");
 const bcrypt = require("bcryptjs");
 const { User } = require("../models");
 let access_token;
+let access_token1;
 // const salt = bcrypt.genSaltSync(10);
 
 beforeAll(async () => {
@@ -32,6 +33,21 @@ describe("post /users/register", function () {
       .post("/users/register")
       .send({
         email: "muhammadadibhasany1501@gmail.com",
+        password: "12345678",
+        username: "adib",
+      })
+      .set("Accept", "application/json");
+    expect(response.status).toEqual(201);
+    expect(response.body).toHaveProperty("statusCode");
+    expect(response.body).toHaveProperty("message");
+    expect(response.body.message).toMatch(new RegExp("@"));
+  });
+
+  it("Success Register 201", async function () {
+    const response = await request(app)
+      .post("/users/register")
+      .send({
+        email: "adibhasany1501@gmail.com",
         password: "12345678",
         username: "adib",
       })
@@ -114,6 +130,34 @@ describe("post /users/login", function () {
     expect(response.status).toEqual(200);
     expect(response.body).toHaveProperty("statusCode");
     expect(response.body).toHaveProperty("access_token");
+    expect(response.body).toHaveProperty("data");
+    expect(response.body.data).toHaveProperty("username");
+    expect(response.body.data).toHaveProperty("totalCalorie");
+    expect(response.body.data).toHaveProperty("endSub");
+    expect(response.body.data).toHaveProperty("height");
+    expect(response.body.data).toHaveProperty("weight");
+    expect(response.body.data).toHaveProperty("level");
+  });
+
+  it("Success Login 200", async function () {
+    const response = await request(app)
+      .post("/users/login")
+      .send({
+        email: "adibhasany1501@gmail.com",
+        password: "12345678",
+      })
+      .set("Accept", "application/json");
+    access_token1 = response.body.access_token;
+    expect(response.status).toEqual(200);
+    expect(response.body).toHaveProperty("statusCode");
+    expect(response.body).toHaveProperty("access_token");
+    expect(response.body).toHaveProperty("data");
+    expect(response.body.data).toHaveProperty("username");
+    expect(response.body.data).toHaveProperty("totalCalorie");
+    expect(response.body.data).toHaveProperty("endSub");
+    expect(response.body.data).toHaveProperty("height");
+    expect(response.body.data).toHaveProperty("weight");
+    expect(response.body.data).toHaveProperty("level");
   });
 });
 
@@ -125,7 +169,7 @@ describe("put /users/update", function () {
         username: "adib",
         height: 45,
         weight: 70,
-        gender: "Female",
+        gender: "female",
       })
       .set({ access_token, Accept: "application/json" });
     expect(response.status).toEqual(200);
@@ -141,7 +185,7 @@ describe("put /users/update", function () {
         username: "adib",
         height: 45,
         weight: 70,
-        gender: "Female",
+        gender: "female",
       })
       .set({ access_token: "sadasd", Accept: "application/json" });
     expect(response.status).toEqual(401);
@@ -168,7 +212,7 @@ describe("put /users/update", function () {
 });
 
 describe("patch /users/updateSub", function () {
-  it("Success Update", async function () {
+  it("Success Update sub", async function () {
     const response = await request(app)
       .patch("/users/updateSub")
       .send({
@@ -178,6 +222,89 @@ describe("patch /users/updateSub", function () {
     expect(response.status).toEqual(200);
     expect(response.body).toHaveProperty("statusCode");
     expect(response.body).toHaveProperty("message");
-    expect(response.body.message).toMatch(new RegExp("Success to update"));
+    expect(response.body.message).toMatch(new RegExp("Success to Subscribe"));
+  });
+
+  it("Failed update sub failed 401", async function () {
+    const response = await request(app)
+      .patch("/users/updateSub")
+      .send({
+        endSub: 30,
+      })
+      .set({ access_token: "sadasd", Accept: "application/json" });
+    expect(response.status).toEqual(401);
+    expect(response.body).toHaveProperty("statusCode");
+    expect(response.body).toHaveProperty("message");
+    expect(response.body.message).toMatch(new RegExp("Invalid token"));
+  });
+
+  it("Failed Update sub failed no token 401", async function () {
+    const response = await request(app)
+      .patch("/users/updateSub")
+      .send({
+        endSub: 30,
+      })
+      .set({ Accept: "application/json" });
+    expect(response.status).toEqual(401);
+    expect(response.body).toHaveProperty("statusCode");
+    expect(response.body).toHaveProperty("message");
+    expect(response.body.message).toMatch(new RegExp("Error authentication"));
+  });
+});
+
+describe("patch /users/updateCal", function () {
+  it("Success Update calories", async function () {
+    const response = await request(app)
+      .patch("/users/updateCal")
+      .send({
+        run: 2000,
+      })
+      .set({ access_token, Accept: "application/json" });
+    expect(response.status).toEqual(200);
+    expect(response.body).toHaveProperty("statusCode");
+    expect(response.body).toHaveProperty("message");
+    expect(response.body.message).toMatch(
+      new RegExp("Success to Total Calorie")
+    );
+  });
+
+  it("Failed Update fail authentication no token 401", async function () {
+    const response = await request(app)
+      .put("/users/update")
+      .send({
+        run: 2000,
+      })
+      .set({ Accept: "application/json" });
+    expect(response.status).toEqual(401);
+    expect(response.body).toHaveProperty("statusCode");
+    expect(response.body).toHaveProperty("message");
+    expect(response.body.message).toMatch(new RegExp("Error authentication"));
+  });
+
+  it("Failed Update fail authentication incorrect token 401", async function () {
+    const response = await request(app)
+      .put("/users/update")
+      .send({
+        run: 2000,
+      })
+      .set({ access_token: "sadasd", Accept: "application/json" });
+    expect(response.status).toEqual(401);
+    expect(response.body).toHaveProperty("statusCode");
+    expect(response.body).toHaveProperty("message");
+    expect(response.body.message).toMatch(new RegExp("Invalid token"));
+  });
+});
+
+describe("get /users/ranking", function () {
+  it("Success get ranking 200", async function () {
+    const response = await request(app)
+      .get("/users/ranking")
+      .set({ access_token, Accept: "application/json" });
+    expect(response.status).toEqual(200);
+    expect(response.body).toHaveProperty("statusCode");
+    expect(response.body).toHaveProperty("message");
+    expect(response.body.message).toHaveProperty("users");
+    expect(response.body.message).toHaveProperty("currentUserPosition");
+    expect(response.body.message).toHaveProperty("totalUsers");
   });
 });

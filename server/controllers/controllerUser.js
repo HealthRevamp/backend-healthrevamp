@@ -114,31 +114,30 @@ class ControllerUser {
   static async updateTotalCalorie(req, res, next) {
     try {
       const user = await User.findByPk(req.addtionalData.userId);
-      if (!user) throw { name: "notFound" };
+      // if (!user) throw { name: "notFound" };
 
-      if (user) {
-        const { weight, gender } = user;
-        const { run } = req.body;
+      const { weight, gender } = user;
+      // run distance in meters
+      const { run } = req.body;
 
-        let calorie = weight * (JSON.parse(run) / 1000) * 0.9;
-        if (gender === "male") {
-          calorie = weight * (JSON.parse(run) / 1000) * 1.0;
-        }
-
-        let updatedTotalCalorie = user.totalCalorie + Math.ceil(calorie);
-        const updateLevel = Math.floor(updatedTotalCalorie / 20000);
-        let level = user.level;
-
-        if (updateLevel > 1) {
-          level += updateLevel;
-        }
-        await user.update({ totalCalorie: updatedTotalCalorie, level });
-
-        res.status(200).json({
-          statusCode: 200,
-          message: "Success to Total Calorie",
-        });
+      let calorie = weight * (JSON.parse(run) / 1000) * 0.9;
+      if (gender === "male") {
+        calorie = weight * (JSON.parse(run) / 1000) * 1.0;
       }
+
+      let updatedTotalCalorie = user.totalCalorie + Math.ceil(calorie);
+      const updateLevel = Math.floor(updatedTotalCalorie / 20000);
+      let level = user.level;
+
+      if (updateLevel > 1) {
+        level += updateLevel;
+      }
+      await user.update({ totalCalorie: updatedTotalCalorie, level });
+
+      res.status(200).json({
+        statusCode: 200,
+        message: "Success to Total Calorie",
+      });
     } catch (err) {
       next(err);
     }
@@ -147,7 +146,7 @@ class ControllerUser {
   static async rangkingCalorie(req, res, next) {
     try {
       const user = await User.findByPk(req.addtionalData.userId);
-      if (!user) throw { name: "notFound" };
+      // if (!user) throw { name: "notFound" };
 
       const users = await User.findAll({
         order: [["totalCalorie", "DESC"]],
