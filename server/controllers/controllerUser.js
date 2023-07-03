@@ -42,7 +42,7 @@ class ControllerUser {
         const access_token = generateToken({
           id: user.id,
           email: user.email,
-          password: user.password,
+          // password: user.password,
           username: user.username,
           level: user.level,
         });

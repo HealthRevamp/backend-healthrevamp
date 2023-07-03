@@ -19,6 +19,26 @@ class ControllerHabit {
     }
   }
 
+  static async getOneHabit(req, res, next) {
+    try {
+      const { userId } = req.addtionalData;
+      const { id } = req.params;
+
+      const habit = await Habit.findOne({
+        where: {
+          id: id,
+          UserId: userId,
+        },
+      });
+      res.status(200).json({
+        statusCode: 200,
+        habit,
+      });
+    } catch (err) {
+      next(err);
+    }
+  }
+
   static async addHabits(req, res, next) {
     try {
       const { userId } = req.addtionalData;
@@ -46,7 +66,7 @@ class ControllerHabit {
       const habit = await Habit.findOne({ where: { id } });
       if (!habit) throw { name: "notFound" };
       if (habit.UserId != userId) throw { name: "unauthorized" };
-      const deletedHabit = await Habit.destroy({
+      await Habit.destroy({
         where: {
           id,
         },
