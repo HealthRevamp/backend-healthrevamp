@@ -4,6 +4,7 @@ const authentication = require("../middlewares/authentication");
 
 const {
   challengeActivity,
+  getActivityById,
   completedActivity,
   notificationHabit,
   paymentStripe,
@@ -12,6 +13,7 @@ const {
 } = require("../controllers/controllerApi");
 
 router.get("/activity", authentication, challengeActivity);
+router.get("/activity/:id", authentication, getActivityById);
 router.get("/completedActivity", authentication, completedActivity);
 router.get("/notification", authentication, notificationHabit);
 router.post("/payment", authentication, paymentStripe);
