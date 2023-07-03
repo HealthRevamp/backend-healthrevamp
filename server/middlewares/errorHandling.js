@@ -34,6 +34,10 @@ function errorHandling(err, req, res, next) {
       statusCode = 409;
       message = "Email in use";
       break;
+    case "AxiosError":
+      statusCode = 422;
+      message = "Unprocessable entity";
+      break;
     default:
       message = "Internal Server Error";
       break;

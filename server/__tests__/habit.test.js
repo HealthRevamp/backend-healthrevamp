@@ -1,7 +1,5 @@
 const request = require("supertest");
-const assert = require("assert");
 const app = require("../app");
-const bcrypt = require("bcryptjs");
 const { generateToken } = require("../helpers/jwt-generator");
 const { User, Habit } = require("../models");
 const udpateDate = require("../helpers/updateDate");
