@@ -30,6 +30,7 @@ class ControllerHabit {
           UserId: userId,
         },
       });
+      if (!habit) throw { name: "notFound" };
       res.status(200).json({
         statusCode: 200,
         habit,
