@@ -5,7 +5,6 @@ const stripe = require("stripe")(
 const SerpApi = require("google-search-results-nodejs");
 const { ActivityLog } = require("../models");
 const axios = require("axios");
-const cron = require("node-cron");
 
 class ControllerApi {
   static async paymentStripe(req, res, next) {

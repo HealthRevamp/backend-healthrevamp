@@ -44,9 +44,15 @@ class ControllerHabit {
     try {
       const { userId } = req.addtionalData;
       const { name, time, description } = req.body;
+
+      const [hour, minute] = time.split(":");
+      const currentTime = new Date();
+      currentTime.setHours(hour);
+      currentTime.setMinutes(minute);
+
       const addedHabit = await Habit.create({
         name,
-        time,
+        time: currentTime,
         description,
         UserId: userId,
       });
