@@ -116,7 +116,7 @@ class ControllerApi {
 
       const response = await axios.request(options);
       const activities = response.data.data;
-      const activity = activities.find((activity) => activity.id === id);
+      const activity = activities.find((activity) => activity._id === id);
 
       if (activity) {
         res.status(200).json(activity);
