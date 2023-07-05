@@ -209,7 +209,7 @@ class ControllerApi {
 
   static async notificationHabit(req, res, next) {
     try {
-      const { message } = req.body;
+      const { message, token } = req.body;
 
       const response = await axios.post(
         "https://fcm.googleapis.com/fcm/send",
@@ -220,7 +220,7 @@ class ControllerApi {
             image:
               "https://banner2.cleanpng.com/20180330/raq/kisspng-logo-medicine-health-care-health-5abeb8ce528090.2165434215224485903379.jpg",
           },
-          to: "e5ocbYAgQ9m97VJCdmnYkd:APA91bF5T3eCT-XZlA7zukecir_xNZ_et7vI9focncDWz_ptk-mmVkvupF0GIngAOwmz2YLlCdJcYfW9nWDVbLCMJYfOVwZgjWSpeZ61eT9cL6K6fWPrA3wxwwt8ishy0EGJG_78BYp5",
+          to: token, //"e5ocbYAgQ9m97VJCdmnYkd:APA91bF5T3eCT-XZlA7zukecir_xNZ_et7vI9focncDWz_ptk-mmVkvupF0GIngAOwmz2YLlCdJcYfW9nWDVbLCMJYfOVwZgjWSpeZ61eT9cL6K6fWPrA3wxwwt8ishy0EGJG_78BYp5",
         },
         {
           headers: {

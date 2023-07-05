@@ -1,6 +1,6 @@
 const cron = require("node-cron");
 const ControllerApi = require("../controllers/controllerApi");
-const { Habit } = require("../models");
+const { Habit, User } = require("../models");
 
 cron.schedule("* * * * *", async () => {
   try {
@@ -17,9 +17,11 @@ cron.schedule("* * * * *", async () => {
       // Mengatur cron job untuk habit saat ini
       const task = cron.schedule(schedule, async () => {
         const message = habit.description; // Mengambil deskripsi habit
-        const body = { message }; // Membuat objek body dengan deskripsi habit
+        const user = await User.findByPk(habit.UserId);
 
-        await ControllerApi.notificationHabit({ body }); // Mengirim data dengan req.body
+        // const body = { message }; // Membuat objek body dengan deskripsi habit
+
+        await ControllerApi.notificationHabit({ message, token: user.token }); // Mengirim data dengan req.body
 
         console.log("Notification sent successfully for habit:", habit.id);
       });

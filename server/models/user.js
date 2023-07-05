@@ -67,6 +67,7 @@ module.exports = (sequelize, DataTypes) => {
       gender: DataTypes.STRING,
       totalCalorie: DataTypes.INTEGER,
       level: DataTypes.INTEGER,
+      token: DataTypes.STRING,
     },
     {
       hooks: {
