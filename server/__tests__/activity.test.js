@@ -1,0 +1,98 @@
+const { User, ActivityLog } = require("../models");
+const request = require("supertest");
+const app = require("../app");
+const { generateToken } = require("../helpers/jwt-generator");
+const udpateDate = require("../helpers/updateDate");
+let access_token;
+let access_token1;
+let user;
+let user1;
+
+beforeAll(async () => {
+  // Clears the database and adds some testing data.
+  // Jest will wait for this promise to resolve before running tests.
+  try {
+    user = await User.create({
+      username: "adib",
+      email: "muhammadadibhasany1501@gmail.com",
+      password: "12345678",
+      endSub: udpateDate(new Date(), 30),
+      height: 165,
+      weight: 60,
+      gender: "",
+      totalCalorie: 0,
+      level: 1,
+    });
+    user1 = await User.create({
+      username: "adibas",
+      email: "adibhasany1501@gmail.com",
+      password: "12345678",
+      endSub: udpateDate(new Date(), 30),
+      height: 0,
+      weight: 0,
+      gender: "",
+      totalCalorie: 0,
+      level: 1,
+    });
+    access_token = generateToken({
+      id: user.id,
+      email: user.email,
+      username: user.username,
+      level: user.level,
+    });
+
+    access_token1 = generateToken({
+      id: user1.id,
+      email: user1.email,
+      username: user1.username,
+      level: user1.level,
+    });
+  } catch (err) {
+    console.log(err);
+  }
+});
+
+afterAll((done) => {
+  ActivityLog.destroy({ truncate: true, cascade: true, restartIdentity: true })
+    .then((_) => {
+      return User.destroy({
+        truncate: true,
+        cascade: true,
+        restartIdentity: true,
+      });
+    })
+    .then((_) => {
+      done();
+    })
+    .catch((err) => {
+      done(err);
+    });
+});
+
+describe("post /activity", function () {
+  it("Success Post activity log 201", async function () {
+    const response = await request(app)
+      .post("/activity-log/createALog")
+      .send({
+        timeElapsed: 15,
+        idActivity: "co_45",
+      })
+      .set({ access_token, Accept: "application/json" });
+    expect(response.status).toEqual(201);
+    expect(response.body).toHaveProperty("statusCode");
+    expect(response.body).toHaveProperty("message");
+  });
+
+  it("Failed Post activity log 422", async function () {
+    const response = await request(app)
+      .post("/activity-log/createALog")
+      .send({
+        timeElapsed: 15,
+        idActivity: "",
+      })
+      .set({ access_token, Accept: "application/json" });
+    expect(response.status).toEqual(422);
+    expect(response.body).toHaveProperty("statusCode");
+    expect(response.body).toHaveProperty("message");
+  });
+});
