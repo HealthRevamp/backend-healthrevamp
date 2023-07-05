@@ -6,15 +6,15 @@ const udpateDate = require("../helpers/updateDate");
 class ControllerUser {
   static async userRegister(req, res, next) {
     try {
-      const { username, email, password } = req.body;
+      const { username, email, password, height, weight, gender } = req.body;
       const created = await User.create({
         username,
         email,
         password,
         endSub: udpateDate(new Date(), 30),
-        height: 0,
-        weight: 0,
-        gender: "",
+        height,
+        weight,
+        gender,
         totalCalorie: 0,
         level: 1,
       });
