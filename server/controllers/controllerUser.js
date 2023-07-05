@@ -99,7 +99,11 @@ class ControllerUser {
         newdate = udpateDate(new Date(), endSub);
       }
 
-      await user.update({ endSub: newdate });
+ 
+      await User.update(
+        { endSub: newdate },
+        { where: { id: req.addtionalData.userId } }
+      );
 
       res.status(200).json({
         statusCode: 200,
